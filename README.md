@@ -1,9 +1,10 @@
 # What is it
 This is my discord music bot that I wrote for my private community server.
 Currently it supports next commands:
-/play [search] (search can be text, url, playlist) (YouTube only)
-/queue (Returns current queue)
-/skip (Skip current track)
+
+<b>/play [search]</b> <i>(search can be text, url, playlist)</i> <b>(YouTube only)</b><br>
+<b>/queue</b> <i>(Returns current queue)<br></i>
+<b>/skip</b> <i>(Skip current track)<br></i>
 
 # Requirements
 NodeJS (v18+)

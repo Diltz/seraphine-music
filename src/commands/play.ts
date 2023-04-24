@@ -1,7 +1,7 @@
 import ytdl from 'ytdl-core'
 import ytpl from 'ytpl'
 import ytsr from 'ytsr'
-import { Client, Guild, SlashCommandBuilder, VoiceChannel } from "discord.js";
+import { Client, CommandInteraction, Guild, SlashCommandBuilder, VoiceChannel } from "discord.js";
 import { getVoiceConnection } from "@discordjs/voice";
 import {Database} from 'better-sqlite3'
 
@@ -121,7 +121,11 @@ async function execute(client: Client, interaction: any, db: Database) {
         return interaction.editReply({content: `Трек **${track_info.videoDetails.title}** добавлен в очередь под номером **${queue["COUNT(*)"]}**`})
     };
 
-    interaction.editReply({content: `Запускаю трек **${track_info.videoDetails.title}**`})
+    if (interaction.replied) {
+        interaction.editReply({content: `Запускаю трек **${track_info.videoDetails.title}**`})
+    } else {
+        interaction.reply({content: `Запускаю трек **${track_info.videoDetails.title}**`})
+    }
 
     next_track(guild, db, interaction.channel)
 }

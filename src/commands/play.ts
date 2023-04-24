@@ -121,7 +121,7 @@ async function execute(client: Client, interaction: any, db: Database) {
         return interaction.editReply({content: `Трек **${track_info.videoDetails.title}** добавлен в очередь под номером **${queue["COUNT(*)"]}**`})
     };
 
-    if (interaction.replied) {
+    if (interaction.deferred) {
         interaction.editReply({content: `Запускаю трек **${track_info.videoDetails.title}**`})
     } else {
         interaction.reply({content: `Запускаю трек **${track_info.videoDetails.title}**`})

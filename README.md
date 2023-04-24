@@ -11,7 +11,7 @@ Currently it supports next commands:
 <b>FFmpeg</b> installed (i don't recommend using npm ffmpeg, cuz it's bad)
 
 # Language
-I haven't translated messages, so it replies on russian language, you have to manually edit all ts scripts to set your preferred language
+I haven't translated messages, so it replies on Russian language, you have to manually edit all ts scripts to set your preferred language
 
 # Installation
 Want to try it out?<br>

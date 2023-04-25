@@ -34,6 +34,12 @@ async function execute(client: Client, interaction: any, db: Database) {
         return interaction.reply({ephemeral: true, content: `Чтобы мной управлять зайди на канал ${bot_member?.voice.channel}`})
     }
 
+    // defer reply
+
+    await interaction.deferReply()
+
+    //
+
     let url = search.replace(/'/g, "''")
 
     // support for playlists
@@ -49,7 +55,7 @@ async function execute(client: Client, interaction: any, db: Database) {
         } catch (error) {
             console.log(error);
 
-            return interaction.reply({ephemeral: true, content: 'Не удалось получить информацию о плейлисте'})
+            return interaction.editReply({content: 'Не удалось получить информацию о плейлисте'})
         }
 
         // remove live tracks
@@ -68,7 +74,7 @@ async function execute(client: Client, interaction: any, db: Database) {
             db.prepare("INSERT INTO queue (guild_id, search, name, requested, channelid) VALUES (?, ?, ?, ?, ?)").run(guild.id, item.shortUrl, item.title, member.user.id, interaction.channel.id)
         })
 
-        await interaction.reply({content: `Добавлено ${playlist.items.length} треков в очередь`})
+        await interaction.editReply({content: `Добавлено ${playlist.items.length} треков в очередь`})
         
         if (!getVoiceConnection(guild.id)) {
             next_track()
@@ -80,13 +86,11 @@ async function execute(client: Client, interaction: any, db: Database) {
     //
 
     if (!ytdl.validateURL(url)) {
-        await interaction.deferReply()
-
         let search_results = await ytsr(url, {pages: 1, limit: 1})
         search_results.items = search_results.items.filter((item: any) => !item.isLive && item.type === 'video')
 
         if (search_results.items.length === 0) {
-            return interaction.reply({ephemeral: true, content: 'Ничего не найдено'})
+            return interaction.editReply({content: 'Ничего не найдено'})
         }
 
         const video: any = search_results.items[0]
@@ -101,7 +105,6 @@ async function execute(client: Client, interaction: any, db: Database) {
         track_info = await ytdl.getBasicInfo(url)
     } catch (error) {
         console.log(error);
-
         return interaction.editReply({content: 'Не удалось получить информацию о треке'})
     }
 
@@ -119,14 +122,9 @@ async function execute(client: Client, interaction: any, db: Database) {
 
     if (queue["COUNT(*)"] !== 1) {
         return interaction.editReply({content: `Трек **${track_info.videoDetails.title}** добавлен в очередь под номером **${queue["COUNT(*)"]}**`})
-    };
-
-    if (interaction.deferred) {
-        interaction.editReply({content: `Запускаю трек **${track_info.videoDetails.title}**`})
-    } else {
-        interaction.reply({content: `Запускаю трек **${track_info.videoDetails.title}**`})
     }
 
+    interaction.editReply({content: `Запускаю трек **${track_info.videoDetails.title}**`})
     next_track(guild, db, interaction.channel)
 }
 

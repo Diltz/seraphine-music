@@ -118,7 +118,7 @@ async function execute(client: Client, interaction: any, db: Database) {
 
     db.prepare("INSERT INTO queue (guild_id, search, channelid, requested, name) VALUES (?, ?, ?, ?, ?)").run(guild.id, url, interaction.channel.id, interaction.user.id, track_info.videoDetails.title)
     
-    const queue: any = db.prepare("SELECT COUNT(*) FROM queue").get()
+    const queue: any = db.prepare("SELECT COUNT(*) FROM queue WHERE guild_id = ?").get(guild.id)
 
     if (queue["COUNT(*)"] !== 1) {
         return interaction.editReply({content: `Трек **${track_info.videoDetails.title}** добавлен в очередь под номером **${queue["COUNT(*)"]}**`})

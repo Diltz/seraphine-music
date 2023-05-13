@@ -1,9 +1,15 @@
 import ytdl from 'ytdl-core'
 import { Guild, GuildBasedChannel, TextChannel, VoiceBasedChannel, VoiceChannel } from "discord.js";
-import { createAudioPlayer, createAudioResource, VoiceConnection, AudioPlayer, getVoiceConnection, joinVoiceChannel, AudioResource, NoSubscriberBehavior, AudioPlayerStatus } from "@discordjs/voice";
+import { createAudioPlayer, createAudioResource, VoiceConnection, AudioPlayer, getVoiceConnection, joinVoiceChannel, AudioResource, NoSubscriberBehavior, AudioPlayerStatus, StreamType, demuxProbe } from "@discordjs/voice";
 import {Database} from 'better-sqlite3'
+import internal from 'stream';
 
 const clear_queue = require("./clear-queue.js")
+
+async function probeAndCreateResource(readableStream: internal.Readable) {
+	const { stream, type } = await demuxProbe(readableStream);
+	return await createAudioResource(stream, { inputType: type });
+}
 
 async function next_track(guild: Guild, db: Database, channel: GuildBasedChannel): Promise<any> {
     const track: any = db.prepare("SELECT * FROM queue WHERE guild_id = ? ORDER BY position ASC LIMIT 1").get(guild.id)
@@ -57,7 +63,7 @@ async function next_track(guild: Guild, db: Database, channel: GuildBasedChannel
 
     // play
 
-    let audioResource: AudioResource = await createAudioResource(stream)
+    let audioResource: AudioResource = await probeAndCreateResource(stream)
 
     player.play(audioResource);
 

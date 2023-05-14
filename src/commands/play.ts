@@ -1,7 +1,7 @@
 import ytdl from 'ytdl-core'
 import ytpl from 'ytpl'
 import ytsr from 'ytsr'
-import { Client, CommandInteraction, Guild, SlashCommandBuilder, VoiceChannel } from "discord.js";
+import { Client, Guild, SlashCommandBuilder, VoiceChannel } from "discord.js";
 import { getVoiceConnection } from "@discordjs/voice";
 import {Database} from 'better-sqlite3'
 
@@ -77,7 +77,7 @@ async function execute(client: Client, interaction: any, db: Database) {
         await interaction.editReply({content: `Добавлено ${playlist.items.length} треков в очередь`})
         
         if (!getVoiceConnection(guild.id)) {
-            next_track()
+            next_track(guild, db, interaction.channel)
         }
 
         return

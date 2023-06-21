@@ -5,6 +5,7 @@ Currently it supports next commands:
 <b>/play [search]</b> <i>(search can be text, url, playlist)</i> <b>(YouTube only)</b><br>
 <b>/queue</b> <i>(Returns current queue)<br></i>
 <b>/skip</b> <i>(Skip current track)<br></i>
+<b>/stop</b> <i>(Stops current track and clears queue)<br></i>
 
 # Requirements
 <b>NodeJS</b> (v18+)<br>

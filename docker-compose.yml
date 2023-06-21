@@ -13,8 +13,5 @@ services:
       - 8.8.4.4
     deploy:
       resources:
-        limits:
-          cpus: '0.75'
         reservations:
-          cpus: '0.10'
           memory: 128M

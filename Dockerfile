@@ -1,4 +1,4 @@
-FROM ffmpeg:4.1-alpine
+FROM jrottenberg/ffmpeg:4.1-alpine
 FROM node:18
 WORKDIR /app
 COPY package.json .

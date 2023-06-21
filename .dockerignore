@@ -1,0 +1,7 @@
+node_modules
+LICENSE
+README.md
+.env.example
+dist
+.gitignore
+.git

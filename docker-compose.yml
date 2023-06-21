@@ -1,0 +1,20 @@
+version: '3.9'
+services:
+  seraphine:
+    container_name: seraphine
+    env_file:
+      - .env
+    build: .
+    restart: always
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1
+      - 8.8.8.8
+      - 8.8.4.4
+    deploy:
+      resources:
+        limits:
+          cpus: '0.75'
+        reservations:
+          cpus: '0.10'
+          memory: 128M

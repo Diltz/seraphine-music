@@ -1,6 +1,6 @@
 import ytdl from 'ytdl-core'
 import ytpl from 'ytpl'
-import ytsr from 'ytsr'
+import ytsr from 'diltz-ytsr-fixed'
 import { Client, Guild, SlashCommandBuilder, VoiceChannel } from "discord.js";
 import { getVoiceConnection } from "@discordjs/voice";
 import {Database} from 'better-sqlite3'
@@ -8,6 +8,7 @@ import {Database} from 'better-sqlite3'
 // create function next track to play use db to get next track, don't forget to remove current track from queue using it's position from function argument
 
 const next_track = require("../util/next-track.js")
+const clear_queue = require("../util/clear-queue.js")
 
 //
 
@@ -32,6 +33,12 @@ async function execute(client: Client, interaction: any, db: Database) {
 
     if (bot_member?.voice.channelId !== voiceChannel.id && bot_member?.voice.channel) {
         return interaction.reply({ephemeral: true, content: `Чтобы мной управлять зайди на канал ${bot_member?.voice.channel}`})
+    }
+
+    // reset queue if no voice connection
+
+    if (!bot_member?.voice.channel) {
+        clear_queue(guild, db)
     }
 
     // defer reply

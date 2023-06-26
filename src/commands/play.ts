@@ -109,7 +109,13 @@ async function execute(client: Client, interaction: any, db: Database) {
     let track_info
 
     try {
-        track_info = await ytdl.getBasicInfo(url)
+        track_info = await ytdl.getBasicInfo(url, {
+            requestOptions: {
+                headers: {
+                    Cookie: process.env.ytcookie
+                }
+            }
+        })
     } catch (error) {
         console.log(error);
         return interaction.editReply({content: 'Не удалось получить информацию о треке'})

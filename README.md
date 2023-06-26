@@ -24,3 +24,8 @@ Here's steps:
 <li><b>Install packages</b> - npm i</li>
 <li><b>Build application</b> - tsc</li>
 <li><b>Run application</b> - pm2 start ./dist/index.js --name seraphine <b>OR</b> npm start</li>
+
+## Docker variant
+<li><b>Clone repository</b> - git clone https://github.com/Diltz/seraphine-music.git</li>
+<li><b>Create .env file inside directory</b> - use .env.example as reference</li>
+<li><b>Build application</b> - docker compose up -d --build</li>

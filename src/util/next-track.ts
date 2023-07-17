@@ -51,7 +51,12 @@ async function next_track(guild: Guild, db: Database, channel: GuildBasedChannel
         stream = ytdl(track.search, {
             filter: "audioonly",
             quality: 'highestaudio',
-            highWaterMark: 1024 * 1024 * 512
+            highWaterMark: 1 << 25,
+            requestOptions: {
+                headers: {
+                    'Cookie': process.env.ytcookie
+                },
+            },
         })
     } catch (error) {
         console.error(error);

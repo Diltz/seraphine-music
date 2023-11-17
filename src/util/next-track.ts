@@ -1,14 +1,12 @@
 import ytdl from 'ytdl-core'
-import { Guild, GuildBasedChannel, TextChannel, VoiceBasedChannel, VoiceChannel } from "discord.js";
-import { createAudioPlayer, createAudioResource, VoiceConnection, AudioPlayer, getVoiceConnection, joinVoiceChannel, AudioResource, NoSubscriberBehavior, AudioPlayerStatus, StreamType, demuxProbe } from "@discordjs/voice";
+import { EmbedBuilder, Guild, GuildBasedChannel, TextChannel, VoiceBasedChannel, VoiceChannel } from "discord.js";
+import { createAudioPlayer, createAudioResource, VoiceConnection, getVoiceConnection, joinVoiceChannel, AudioResource, AudioPlayerStatus, demuxProbe } from "@discordjs/voice";
 import {Database} from 'better-sqlite3'
 import internal from 'stream';
 
-const clear_queue = require("./clear-queue.js")
-
 async function probeAndCreateResource(readableStream: internal.Readable) {
 	const { stream, type } = await demuxProbe(readableStream);
-	return await createAudioResource(stream, { inputType: type });
+	return createAudioResource(stream, { inputType: type, inlineVolume: true });
 }
 
 async function next_track(guild: Guild, db: Database, channel: GuildBasedChannel): Promise<any> {
@@ -69,19 +67,34 @@ async function next_track(guild: Guild, db: Database, channel: GuildBasedChannel
     // play
 
     let audioResource: AudioResource = await probeAndCreateResource(stream)
+    audioResource.volume?.setVolume(0.5) // so audio will sound more clear
 
     player.play(audioResource);
 
     //
 
-    channel.send({content: `Сейчас играет: **${track.name}**\nЗаказал: ${user}\nКанал: ${userVoice}`})
+    const embed = new EmbedBuilder()
+        .setTitle('Сейчас играет')
+        .addFields(
+            {name: 'Трек', value: `[${track.name}](${track.search}) / <:youtube:1175190473359491162>`},
+            {name: 'Заказал', value: `<@${user.id}>`, inline: true},
+            {name: 'Канал', value: `<#${userVoice.id}>`, inline: true}
+        )
+        .setFooter({text: 'developed by diltz'})
+        .setTimestamp()
+
+    channel.send({embeds: [embed]})
 
     //
 
     player.on(AudioPlayerStatus.Idle, async () => {
         db.prepare("DELETE FROM queue WHERE guild_id = ? AND position = ?").run(guild.id, track.position)
         await player.stop(true)
-        return next_track(guild, db, channel)
+        try {
+            next_track(guild, db, channel)
+        } catch (error) {
+            console.error(`Issue occured in ${guild.id}\nError: ${error}`)
+        }
     })
 }
 

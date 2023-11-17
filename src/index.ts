@@ -1,4 +1,5 @@
-import {Client, IntentsBitField} from 'discord.js'
+import { readdirSync } from 'fs'
+import {Client, CommandInteraction, IntentsBitField} from 'discord.js'
 import dotenv from 'dotenv'
 import bettersqlite3 from 'better-sqlite3'
 import path from 'path'
@@ -35,18 +36,40 @@ const client = new Client({intents: [
   IntentsBitField.Flags.Guilds
 ]})
 
-// handle cmds
+// load cmds
+
+type CommandData = {name: string, execute: (client: Client, interaction: CommandInteraction, db: bettersqlite3.Database) => void}
+const commands: CommandData[] = []
+
+readdirSync(__dirname + '/commands', { encoding: 'utf-8' }).forEach((name: string) => {
+  commands.push({
+    name: name.split('.')[0],
+    execute: require(__dirname + '/commands/' + name).execute
+  })
+})
 
 client.on("interactionCreate", async interaction => {
   if (interaction.isCommand()) {
-    const path = `${__dirname}/commands/${interaction.commandName}.js`
-    const cmd = require(path)
+    let commandName = interaction.commandName
+    let data = commands.find(data => data.name == commandName)
+
+    if (!data) {
+      interaction.reply({ content: 'Я не знаю как работать с этой командой :(' });
+      return
+    }
 
     try {
-      cmd.execute(client, interaction, db)
+      data.execute(client, interaction, db)
     } catch (error) {
-      console.log(error)
-      interaction.reply({ephemeral: true, content: 'Ошибка взаимодействия!'})
+      console.log(`[Command Error - ${commandName}] ${error}\nDate: ${new Date().toLocaleString()}`)
+
+      let reply = { content: 'Ошибка выполнения команды **X_X**' }
+
+      if (interaction.replied || interaction.deferred) {
+        interaction.editReply(reply)
+      } else {
+        interaction.reply(reply)
+      }
     }
   }
 })

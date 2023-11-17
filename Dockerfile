@@ -1,5 +1,5 @@
-FROM jrottenberg/ffmpeg:4.1-alpine
 FROM node:18
+RUN apt-get update && apt-get install ffmpeg -y
 WORKDIR /app
 COPY package.json .
 RUN npm install\

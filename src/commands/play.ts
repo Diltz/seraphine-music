@@ -1,7 +1,7 @@
 import { PlaylistData, SpotifyClient, TrackInfo } from 'node-spotify-web'
 import ytdl from 'ytdl-core'
 import ytpl from 'ytpl'
-import ytsr from 'diltz-ytsr-fixed'
+import ytsr from '@distube/ytsr'
 import { Client, Guild, SlashCommandBuilder, VoiceChannel } from "discord.js";
 import { getVoiceConnection } from "@discordjs/voice";
 import {Database} from 'better-sqlite3'

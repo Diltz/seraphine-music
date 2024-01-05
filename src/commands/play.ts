@@ -126,7 +126,7 @@ async function execute(client: Client, interaction: any, db: Database) {
         // find every track in yt
 
         for await (const track of result.tracks) {
-            let search_results = await ytsr(`${track.name} - ${track.artists.join(', ')}`, {pages: 1, limit: 1})
+            let search_results = await ytsr(`${track.name} - ${track.artists.join(', ')}`, {limit: 1})
             search_results.items = search_results.items.filter((item: any) => !item.isLive && item.type === 'video')
 
             if (search_results.items.length > 0) {
@@ -155,7 +155,7 @@ async function execute(client: Client, interaction: any, db: Database) {
     //
 
     if (!ytdl.validateURL(url)) {
-        let search_results = await ytsr(url, {pages: 1, limit: 1})
+        let search_results = await ytsr(url, {limit: 1})
         search_results.items = search_results.items.filter((item: any) => !item.isLive && item.type === 'video')
 
         if (search_results.items.length > 0) {
